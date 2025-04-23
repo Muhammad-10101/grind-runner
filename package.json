@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "bash build.sh"
+  },
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.4",
+    "viem": "^2.27.2",
+    "wagmi": "^2.14.16"
+  }
+}

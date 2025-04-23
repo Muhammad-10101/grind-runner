@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$Grind Runner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="custom-styles.css">
+    <script src="asset-path.js"></script>
+</head>
+<body>
+    <div class="balance-display">
+        <span id="main-balance">Balance: 0 $Grind</span>
+    </div>
+    
+    <!-- Achievements Icon Button -->
+    <div class="achievements-button-container">
+        <button class="achievements-button" title="Achievements">🏆</button>
+    </div>
+    
+    <div class="game-container">
+        <div class="start-screen">
+            <div class="title">$Grind Runner</div>
+            <div class="mascot-container">
+                <img src="" alt="Hamster Mascot" class="hamster-mascot active" data-character="hamster">
+                <img src="" alt="Bear Mascot" class="bear-mascot" data-character="bear">
+                <img src="" alt="Frog Mascot" class="frog-mascot" data-character="frog">
+            </div>
+            <div class="buttons-container">
+                <button class="menu-button how-to-play-btn">How to Play</button>
+                <button class="menu-button start-button">Start Game</button>
+                <button class="menu-button wallet-button">Connect Wallet</button>
+                <button class="menu-button leaderboard-button">Leaderboard</button>
+                <button class="menu-button shop-button">Shop</button>
+                <button class="menu-button inventory-button">Inventory</button>
+            </div>
+            <h2 class="character-selector-title">Select your Character</h2>
+            <div class="character-selector">
+                <div class="character-container selected" data-character="hamster">
+                    <img src="" alt="Hamster" class="character-logo">
+                    <div class="character-name">Hamster</div>
+                </div>
+                <div class="character-container" data-character="bear">
+                    <img src="" alt="Bear" class="character-logo">
+                    <div class="character-name">Bear</div>
+                </div>
+                <div class="character-container" data-character="frog">
+                    <img src="" alt="Frog" class="character-logo">
+                    <div class="character-name">Frog</div>
+                </div>
+            </div>
+        </div>
+        <div class="mini-inventory">
+            <div class="mini-inventory-items"></div>
+        </div>
+    </div>
+
+    <!-- Settings Button and Theme Toggle -->
+    <div class="settings-container">
+        <div class="theme-toggle">
+            <label class="toggle-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label"></span>
+            </label>
+            <span class="theme-emoji">🌙</span>
+        </div>
+        <button class="profile-btn">👤</button>
+        <button class="settings-btn">⚙️</button>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal" id="howToPlayModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>How to Play</h2>
+            <p>Press <span class="key">SPACE</span> or <span class="key">↑</span> to jump over obstacles</p>
+            <p>Collect $Grind tokens to earn points and build your combo</p>
+            <p>Game speed increases over time - stay sharp!</p>
+            <p>Press <span class="key">ESC</span> or click the pause button to pause the game</p>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <span class="close-btn" id="profile-close-btn">&times;</span>
+            <h2>Player Profile</h2>
+            <div class="profile-info">
+                <div class="profile-avatar">
+                    <img src="" alt="Profile Avatar" id="profile-avatar">
+                    <div class="avatar-tooltip">
+                        <button class="change-avatar-btn">Change Avatar</button>
+                        <span class="tooltip-text">Click to upload a custom image or right-click to reset to default</span>
+                    </div>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-details">
+                    <div class="profile-item">
+                        <label>Username:</label>
+                        <span id="profile-username">Player1</span>
+                        <button class="edit-profile-btn" data-field="username">Edit</button>
+                    </div>
+                    <div class="profile-item">
+                        <label>High Score:</label>
+                        <span id="profile-highscore">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Username Modal -->
+    <div class="modal" id="editUsernameModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Username</h2>
+            <div class="edit-form">
+                <input type="text" id="usernameInput" placeholder="Enter new username" maxlength="15">
+                <div class="edit-actions">
+                    <button id="cancelEditBtn">Cancel</button>
+                    <button id="saveUsernameBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-option" id="music-option">
+                <label for="music-toggle">Music</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="music-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </div>
+            </div>
+            <div class="settings-option" id="sfx-option">
+                <label for="sfx-toggle">Sound Effects</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="sfx-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Modal -->
+    <div class="modal shop-modal" id="shop-modal">
+        <div class="modal-content shop-content">
+            <div class="modal-header">
+                <h2>Shop</h2>
+                <div class="balance">Balance: 100 $Grind</div>
+            </div>
+            <div class="shop-items">
+                <!-- Store items will be dynamically added here -->
+            </div>
+            <button class="close-button">×</button>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div class="inventory-modal">
+        <div class="inventory-content">
+            <div class="inventory-header">
+                <h2 class="inventory-title">Inventory</h2>
+                <button class="close-button">×</button>
+            </div>
+            <div class="inventory-items">
+                <!-- Inventory items will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set all image sources after asset-path.js is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Character mascots
+            document.querySelector('.hamster-mascot').src = getAssetPath('assets/images/hamster.png');
+            document.querySelector('.bear-mascot').src = getAssetPath('assets/images/bear.png');
+            document.querySelector('.frog-mascot').src = getAssetPath('assets/images/frog.png');
+            
+            // Character selection
+            document.querySelector('[data-character="hamster"] .character-logo').src = getAssetPath('assets/images/hamster.png');
+            document.querySelector('[data-character="bear"] .character-logo').src = getAssetPath('assets/images/bear.png');
+            document.querySelector('[data-character="frog"] .character-logo').src = getAssetPath('assets/images/frog.png');
+            
+            // Profile avatar
+            document.getElementById('profile-avatar').src = getAssetPath('assets/images/default-avatar.png');
+        });
+    </script>
+    <script src="gameState.js"></script>
+    <script src="shop.js"></script>
+    <script src="inventory.js"></script>
+    <script src="game.js"></script>
+</body>
+</html> 

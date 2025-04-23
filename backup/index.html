@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$Grind Runner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="balance-display">
+        <span id="main-balance">0</span>
+    </div>
+    <div class="game-container">
+        <div class="start-screen">
+            <div class="title">$Grind Runner</div>
+            <div class="mascot-container">
+                <img src="assets/images/hamster.png" alt="Hamster Mascot" class="hamster-mascot active" data-character="hamster">
+                <img src="assets/images/Bear.png" alt="Bear Mascot" class="bear-mascot" data-character="bear">
+                <img src="assets/images/Frog.png" alt="Frog Mascot" class="frog-mascot" data-character="frog">
+            </div>
+            <div class="buttons-container">
+                <button class="how-to-play-btn">How to Play</button>
+                <button class="start-button">Start Game</button>
+                <button class="wallet-button">Connect Wallet</button>
+                <button class="leaderboard-button">Leaderboard</button>
+                <button class="shop-button">Shop</button>
+                <button class="inventory-button">Inventory</button>
+            </div>
+            <h2 class="character-selector-title">Select your Character</h2>
+            <div class="character-selector">
+                <div class="character-container selected" data-character="hamster">
+                    <img src="assets/images/Hamster.png" alt="Hamster" class="character-logo">
+                    <div class="character-name">Hamster</div>
+                </div>
+                <div class="character-container" data-character="bear">
+                    <img src="assets/images/Bear.png" alt="Bear" class="character-logo">
+                    <div class="character-name">Bear</div>
+                </div>
+                <div class="character-container" data-character="frog">
+                    <img src="assets/images/Frog.png" alt="Frog" class="character-logo">
+                    <div class="character-name">Frog</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Button and Theme Toggle -->
+    <div class="settings-container">
+        <div class="theme-toggle">
+            <label class="toggle-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label"></span>
+            </label>
+            <span class="theme-emoji">🌙</span>
+        </div>
+        <button class="settings-btn">⚙️</button>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div class="modal" id="howToPlayModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>How to Play</h2>
+            <p>Press <span class="key">SPACE</span> or <span class="key">↑</span> to jump over obstacles</p>
+            <p>Collect tokens to earn points and build your combo</p>
+            <p>Game speed increases over time - stay sharp!</p>
+            <p>Press <span class="key">ESC</span> or click the pause button to pause the game</p>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-option">
+                <label for="music-toggle">Music</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="music-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </div>
+            </div>
+            <div class="settings-option">
+                <label for="sfx-toggle">Sound Effects</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="sfx-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Modal -->
+    <div class="modal shop-modal" id="shop-modal">
+        <div class="modal-content shop-content">
+            <div class="modal-header">
+                <h2>Shop</h2>
+                <div class="balance">100</div>
+            </div>
+            <div class="shop-items">
+                <!-- Store items will be dynamically added here -->
+            </div>
+            <button class="close-button">×</button>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div class="inventory-modal">
+        <div class="inventory-content">
+            <div class="inventory-header">
+                <h2 class="inventory-title">Inventory</h2>
+                <button class="close-button">×</button>
+            </div>
+            <div class="inventory-items">
+                <!-- Inventory items will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="gameState.js"></script>
+    <script src="shop.js"></script>
+    <script src="inventory.js"></script>
+    <script src="game.js"></script>
+</body>
+</html> 

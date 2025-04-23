@@ -1,0 +1,17 @@
+RewriteEngine On
+RewriteRule ^assets/(.*)$ /assets/$1 [L]
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js)$">
+    Header set Cache-Control "max-age=31536000, public"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/png .png
+  AddType image/jpeg .jpg .jpeg
+  AddType image/gif .gif
+</IfModule>
+
+Options -MultiViews 
