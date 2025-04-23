@@ -40,7 +40,7 @@ If assets (images, sounds) are not loading properly on the deployed site:
 
 ## Asset Optimization
 
-Large image files (like hamster.png at 3.2MB) should be optimized to improve load times.
+Large image files should be optimized to improve load times.
 Consider compressing large images before deployment.
 
 ## License
