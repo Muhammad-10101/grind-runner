@@ -1445,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Game state
             this.gameSpeed = 5;
-            this.maxSpeed = 20; // Maximum speed limit
+            this.maxSpeed = 15; // Maximum speed limit
             this.speedIncreaseInterval = 10000; // Increase speed every 10 seconds
             this.speedIncreaseAmount = 0.5; // How much to increase speed by
             this.lastSpeedIncrease = Date.now(); // Track last speed increase
