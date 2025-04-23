@@ -1513,24 +1513,24 @@ document.addEventListener('DOMContentLoaded', () => {
             this.jumpForce = -15;
             
             // Load sound effects
-            this.tokenSound = new Audio('assets/sound/coin.wav');
+            this.tokenSound = new Audio(getAssetPath('assets/sound/coin.wav'));
             this.tokenSound.volume = 0.3;
             this.tokenSound.onerror = () => console.error('Failed to load coin sound');
             
-            this.jumpSound = new Audio('assets/sound/jump.wav');
+            this.jumpSound = new Audio(getAssetPath('assets/sound/jump.wav'));
             this.jumpSound.volume = 0.3;
             this.jumpSound.onerror = () => console.error('Failed to load jump sound');
             
-            this.gameOverSound = new Audio('assets/sound/game-over.wav');
+            this.gameOverSound = new Audio(getAssetPath('assets/sound/game-over.wav'));
             this.gameOverSound.volume = 0.3;
             this.gameOverSound.onerror = () => console.error('Failed to load game over sound');
             
-            this.hitSound = new Audio('assets/sound/hit.wav');
+            this.hitSound = new Audio(getAssetPath('assets/sound/hit.wav'));
             this.hitSound.volume = 0.3;
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio('assets/music.wav');
+            this.backgroundMusic = new Audio(getAssetPath('assets/music.wav'));
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             this.backgroundMusic.onerror = () => console.error('Failed to load background music');
@@ -1682,24 +1682,24 @@ document.addEventListener('DOMContentLoaded', () => {
             this.itemImages.coffee.src = getAssetPath('assets/images/coffee.png');
             
             // Load sound effects
-            this.tokenSound = new Audio('assets/sound/coin.wav');
+            this.tokenSound = new Audio(getAssetPath('assets/sound/coin.wav'));
             this.tokenSound.volume = 0.3;
             this.tokenSound.onerror = () => console.error('Failed to load coin sound');
             
-            this.jumpSound = new Audio('assets/sound/jump.wav');
+            this.jumpSound = new Audio(getAssetPath('assets/sound/jump.wav'));
             this.jumpSound.volume = 0.3;
             this.jumpSound.onerror = () => console.error('Failed to load jump sound');
             
-            this.gameOverSound = new Audio('assets/sound/game-over.wav');
+            this.gameOverSound = new Audio(getAssetPath('assets/sound/game-over.wav'));
             this.gameOverSound.volume = 0.3;
             this.gameOverSound.onerror = () => console.error('Failed to load game over sound');
             
-            this.hitSound = new Audio('assets/sound/hit.wav');
+            this.hitSound = new Audio(getAssetPath('assets/sound/hit.wav'));
             this.hitSound.volume = 0.3;
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio('assets/music.wav');
+            this.backgroundMusic = new Audio(getAssetPath('assets/music.wav'));
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             this.backgroundMusic.onerror = () => console.error('Failed to load background music');

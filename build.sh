@@ -7,6 +7,8 @@ mkdir -p public/assets/sound
 # Copy and optimize assets
 cp -R assets/images/* public/assets/images/
 cp -R assets/sound/* public/assets/sound/
+# Copy files from assets root
+cp assets/*.wav public/assets/
 
 # Copy web files
 cp *.html public/
