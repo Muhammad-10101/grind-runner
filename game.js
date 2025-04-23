@@ -1445,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Game state
             this.gameSpeed = 5;
-            this.maxSpeed = 15; // Maximum speed limit
+            this.maxSpeed = 20; // Maximum speed limit
             this.speedIncreaseInterval = 10000; // Increase speed every 10 seconds
             this.speedIncreaseAmount = 0.5; // How much to increase speed by
             this.lastSpeedIncrease = Date.now(); // Track last speed increase
@@ -1530,7 +1530,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio(getAssetPath('assets/music.wav'));
+            this.backgroundMusic = new Audio(getAssetPath('assets/music/music.wav'));
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             this.backgroundMusic.onerror = () => console.error('Failed to load background music');
@@ -1699,7 +1699,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio(getAssetPath('assets/music.wav'));
+            this.backgroundMusic = new Audio(getAssetPath('assets/music/music.wav'));
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             this.backgroundMusic.onerror = () => console.error('Failed to load background music');
