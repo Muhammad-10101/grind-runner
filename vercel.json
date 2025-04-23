@@ -26,14 +26,10 @@
       ]
     }
   ],
-  "routes": [
+  "rewrites": [
     { 
-      "handle": "filesystem" 
-    },
-    { 
-      "src": "/assets/(.*)", 
-      "dest": "/assets/$1",
-      "continue": true
+      "source": "/assets/(.*)", 
+      "destination": "/assets/$1"
     }
   ]
 } 
