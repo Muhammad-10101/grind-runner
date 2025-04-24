@@ -36,6 +36,10 @@
       "destination": "/assets/$1"
     },
     {
+      "source": "/favicon.ico",
+      "destination": "/favicon.ico"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
@@ -43,6 +47,7 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/assets/music/(.*)", "dest": "/assets/music/$1" },
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 
