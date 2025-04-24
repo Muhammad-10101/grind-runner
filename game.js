@@ -1534,6 +1534,47 @@ document.addEventListener('DOMContentLoaded', () => {
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             
+            // Add error handling for background music
+            this.backgroundMusic.onerror = () => {
+                console.error('Failed to load background music');
+                // Fallback: try loading from different paths
+                const fallbackPaths = [
+                    'assets/music.wav',
+                    'music.wav',
+                    'assets/music/music.wav'
+                ];
+                
+                let currentFallbackIndex = 0;
+                
+                const tryNextFallback = () => {
+                    if (currentFallbackIndex >= fallbackPaths.length) {
+                        console.error('All fallback paths for background music failed');
+                        return;
+                    }
+                    
+                    const path = getAssetPath(fallbackPaths[currentFallbackIndex]);
+                    console.log(`Trying fallback path for music: ${path}`);
+                    
+                    // Remove previous error handler temporarily
+                    this.backgroundMusic.onerror = null;
+                    
+                    // Set new error handler for this attempt
+                    this.backgroundMusic.onerror = () => {
+                        console.error(`Failed to load music from fallback path: ${path}`);
+                        currentFallbackIndex++;
+                        setTimeout(tryNextFallback, 100);
+                    };
+                    
+                    // Try loading from this path
+                    this.backgroundMusic.src = path;
+                    this.backgroundMusic.load();
+                };
+                
+                // Start trying fallbacks
+                currentFallbackIndex = 0;
+                tryNextFallback();
+            };
+            
             // Initialize audio based on saved settings
             if (!window.audioState.musicEnabled) {
                 this.backgroundMusic.pause();
@@ -4732,8 +4773,55 @@ function testAudioPaths() {
         tryNextFormat();
     }
     
-    // Test each audio file with fallbacks
-    testAudioWithFallbacks(getAssetPath('assets/music.wav'));
+    // Test music file with multiple possible locations
+    function testMusicFile() {
+        const possiblePaths = [
+            getAssetPath('assets/music.wav'),
+            getAssetPath('music.wav'),
+            getAssetPath('assets/music/music.wav')
+        ];
+        
+        let pathIndex = 0;
+        
+        function tryNextPath() {
+            if (pathIndex >= possiblePaths.length) {
+                console.warn('Could not load music file in any location');
+                return;
+            }
+            
+            const path = possiblePaths[pathIndex];
+            console.log(`Testing music path: ${path}`);
+            
+            const audio = new Audio();
+            
+            audio.addEventListener('error', () => {
+                console.error(`Error loading music at path: ${path}`);
+                pathIndex++;
+                tryNextPath();
+            });
+            
+            audio.addEventListener('loadeddata', () => {
+                console.log(`Successfully loaded music: ${path}`);
+            });
+            
+            audio.src = path;
+            
+            try {
+                audio.load();
+            } catch (e) {
+                console.error(`Exception loading music at path: ${path}`, e);
+                pathIndex++;
+                tryNextPath();
+            }
+        }
+        
+        tryNextPath();
+    }
+    
+    // Test music file first
+    testMusicFile();
+    
+    // Test each sound file with fallbacks
     testAudioWithFallbacks(getAssetPath('assets/sound/coin.wav'));
     testAudioWithFallbacks(getAssetPath('assets/sound/jump.wav'));
     testAudioWithFallbacks(getAssetPath('assets/sound/hit.wav'));
