@@ -1530,14 +1530,23 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio(getAssetPath('assets/music/music.wav'));
+            this.backgroundMusic = new Audio();
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             
-            // Add error handling for background music
-            this.backgroundMusic.onerror = () => {
-                console.error('Failed to load background music');
+            // Enhanced error handling for background music
+            this.backgroundMusic.onerror = (event) => {
+                console.error('Failed to load background music', event);
+                // Log specific error details for debugging
+                if (event && event.target) {
+                    console.error(`Error loading audio at path: ${event.target.src}`);
+                    console.error(`Error code: ${event.target.error ? event.target.error.code : 'unknown'}`);
+                    console.error(`Error message: ${event.target.error ? event.target.error.message : 'unknown'}`);
+                }
             };
+            
+            // Set the source after configuring event handlers
+            this.backgroundMusic.src = getAssetPath('assets/music/music.wav');
             
             // Initialize audio based on saved settings
             if (!window.audioState.musicEnabled) {
@@ -1703,9 +1712,23 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio(getAssetPath('assets/music/music.wav'));
+            this.backgroundMusic = new Audio();
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
+            
+            // Enhanced error handling for background music
+            this.backgroundMusic.onerror = (event) => {
+                console.error('Failed to load background music', event);
+                // Log specific error details for debugging
+                if (event && event.target) {
+                    console.error(`Error loading audio at path: ${event.target.src}`);
+                    console.error(`Error code: ${event.target.error ? event.target.error.code : 'unknown'}`);
+                    console.error(`Error message: ${event.target.error ? event.target.error.message : 'unknown'}`);
+                }
+            };
+            
+            // Set the source after configuring event handlers
+            this.backgroundMusic.src = getAssetPath('assets/music/music.wav');
             
             // Initialize audio based on saved settings
             if (!window.audioState.musicEnabled) {

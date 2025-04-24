@@ -17,9 +17,19 @@ function getAssetPath(relativePath) {
         // In local development on localhost
         finalPath = relativePath;
     } else {
-        // For deployed environments, use the current pathname as base
-        const basePath = currentPath.endsWith('/') ? currentPath : currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-        finalPath = `${basePath}${relativePath}`;
+        // For deployed environments, ensure we're using the correct path
+        // First, clean any leading slashes to avoid double slashes
+        const cleanPath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
+        
+        // Special handling for music files
+        if (cleanPath.includes('assets/music')) {
+            // Make sure we're pointing to where the file actually is in production
+            finalPath = `/${cleanPath}`;
+            console.log(`Music file path: ${finalPath}`);
+        } else {
+            // For all other assets
+            finalPath = `/${cleanPath}`;
+        }
     }
     
     console.log(`Resolved to: ${finalPath}`);

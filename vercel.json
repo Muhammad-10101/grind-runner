@@ -28,6 +28,10 @@
   ],
   "rewrites": [
     { 
+      "source": "/assets/music/(.*)", 
+      "destination": "/assets/music/$1"
+    },
+    { 
       "source": "/assets/(.*)", 
       "destination": "/assets/$1"
     },
@@ -38,6 +42,7 @@
   ],
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/assets/music/(.*)", "dest": "/assets/music/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 
