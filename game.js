@@ -4733,7 +4733,7 @@ function testAudioPaths() {
     }
     
     // Test each audio file with fallbacks
-    testAudioWithFallbacks(getAssetPath('assets/music/music.wav'));
+    testAudioWithFallbacks(getAssetPath('assets/music.wav'));
     testAudioWithFallbacks(getAssetPath('assets/sound/coin.wav'));
     testAudioWithFallbacks(getAssetPath('assets/sound/jump.wav'));
     testAudioWithFallbacks(getAssetPath('assets/sound/hit.wav'));
