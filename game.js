@@ -1530,59 +1530,9 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio();
+            this.backgroundMusic = new Audio(getAssetPath('assets/music.wav'));
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
-            
-            // Try to load music in different formats with proper error handling
-            const loadBackgroundMusic = () => {
-                const formats = ['wav', 'mp3', 'ogg'];
-                let formatIndex = 0;
-                
-                const tryNextFormat = () => {
-                    if (formatIndex >= formats.length) {
-                        console.warn('Could not load background music in any format');
-                        return;
-                    }
-                    
-                    const format = formats[formatIndex];
-                    const path = getAssetPath(`assets/music/music.${format}`);
-                    console.log(`Trying to load background music from: ${path}`);
-                    
-                    // Remove previous error listener if any
-                    this.backgroundMusic.removeEventListener('error', handleError);
-                    
-                    // Add new error handler
-                    this.backgroundMusic.addEventListener('error', handleError);
-                    
-                    // Add success handler
-                    this.backgroundMusic.addEventListener('loadeddata', () => {
-                        console.log(`Successfully loaded background music: ${path}`);
-                    }, { once: true });
-                    
-                    // Set source and try to load
-                    this.backgroundMusic.src = path;
-                    try {
-                        this.backgroundMusic.load();
-                    } catch (e) {
-                        console.error(`Exception loading audio at path: ${path}`, e);
-                        formatIndex++;
-                        setTimeout(tryNextFormat, 100);
-                    }
-                };
-                
-                const handleError = () => {
-                    console.error(`Failed to load background music in format: ${formats[formatIndex]}`);
-                    formatIndex++;
-                    setTimeout(tryNextFormat, 100);
-                };
-                
-                // Start trying formats
-                tryNextFormat();
-            };
-            
-            // Start loading background music
-            loadBackgroundMusic();
             
             // Initialize audio based on saved settings
             if (!window.audioState.musicEnabled) {
@@ -1748,59 +1698,14 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio();
+            this.backgroundMusic = new Audio(getAssetPath('assets/music.wav'));
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
             
-            // Try to load music in different formats with proper error handling
-            const loadBackgroundMusic = () => {
-                const formats = ['wav', 'mp3', 'ogg'];
-                let formatIndex = 0;
-                
-                const tryNextFormat = () => {
-                    if (formatIndex >= formats.length) {
-                        console.warn('Could not load background music in any format');
-                        return;
-                    }
-                    
-                    const format = formats[formatIndex];
-                    const path = getAssetPath(`assets/music/music.${format}`);
-                    console.log(`Trying to load background music from: ${path}`);
-                    
-                    // Remove previous error listener if any
-                    this.backgroundMusic.removeEventListener('error', handleError);
-                    
-                    // Add new error handler
-                    this.backgroundMusic.addEventListener('error', handleError);
-                    
-                    // Add success handler
-                    this.backgroundMusic.addEventListener('loadeddata', () => {
-                        console.log(`Successfully loaded background music: ${path}`);
-                    }, { once: true });
-                    
-                    // Set source and try to load
-                    this.backgroundMusic.src = path;
-                    try {
-                        this.backgroundMusic.load();
-                    } catch (e) {
-                        console.error(`Exception loading audio at path: ${path}`, e);
-                        formatIndex++;
-                        setTimeout(tryNextFormat, 100);
-                    }
-                };
-                
-                const handleError = () => {
-                    console.error(`Failed to load background music in format: ${formats[formatIndex]}`);
-                    formatIndex++;
-                    setTimeout(tryNextFormat, 100);
-                };
-                
-                // Start trying formats
-                tryNextFormat();
-            };
-            
-            // Start loading background music
-            loadBackgroundMusic();
+            // Initialize audio based on saved settings
+            if (!window.audioState.musicEnabled) {
+                this.backgroundMusic.pause();
+            }
         }
         
         resizeCanvas() {
