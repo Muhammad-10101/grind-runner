@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.4",
+    "sharp": "^0.34.1",
     "viem": "^2.27.2",
     "wagmi": "^2.14.16"
   }

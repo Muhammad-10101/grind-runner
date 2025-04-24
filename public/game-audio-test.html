@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Audio Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .log {
+            background-color: #e2e3e5;
+            color: #383d41;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: monospace;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Game Audio Test</h1>
+    
+    <div>
+        <button id="testMusic">Test Background Music Loading</button>
+        <button id="testAllAudio">Test All Audio Files</button>
+    </div>
+    
+    <h2>Results:</h2>
+    <div id="results"></div>
+    
+    <h2>Console Log:</h2>
+    <div id="log" class="log"></div>
+    
+    <script src="asset-path.js"></script>
+    <script>
+        // Initialize window.audioState to prevent errors
+        window.audioState = {
+            musicEnabled: true,
+            sfxEnabled: true
+        };
+        
+        // Override console.log to display in our log div
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            appendToLog('LOG', args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            appendToLog('ERROR', args);
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            appendToLog('WARN', args);
+        };
+        
+        function appendToLog(type, args) {
+            const logDiv = document.getElementById('log');
+            const line = document.createElement('div');
+            line.textContent = `[${type}] ${args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ')}`;
+            
+            if (type === 'ERROR') {
+                line.style.color = '#dc3545';
+            } else if (type === 'WARN') {
+                line.style.color = '#ffc107';
+            }
+            
+            logDiv.appendChild(line);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function appendResult(message, isSuccess) {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = isSuccess ? 'result success' : 'result error';
+            result.textContent = message;
+            resultsDiv.appendChild(result);
+        }
+        
+        // Test function to verify audio paths - copied from game.js with modifications for UI
+        function testAudioPaths() {
+            console.log("Testing audio paths...");
+            
+            // Track overall success
+            let successCount = 0;
+            let failureCount = 0;
+            const totalFiles = 7; // Total number of audio files to test
+            
+            // Function to test multiple formats for the same audio file
+            function testAudioWithFallbacks(basePath, formats = ['wav', 'mp3', 'ogg']) {
+                return new Promise((resolve) => {
+                    // Extract the base name without extension
+                    const lastDotIndex = basePath.lastIndexOf('.');
+                    const fileNameWithoutExt = lastDotIndex !== -1 
+                        ? basePath.substring(0, lastDotIndex)
+                        : basePath;
+                        
+                    console.log(`Testing audio: ${fileNameWithoutExt}`);
+                    
+                    let formatIndex = 0;
+                    const audio = new Audio();
+                    
+                    function tryNextFormat() {
+                        if (formatIndex >= formats.length) {
+                            console.warn(`⚠️ Could not load audio ${fileNameWithoutExt} in any format`);
+                            appendResult(`❌ ${fileNameWithoutExt} - Failed in all formats`, false);
+                            failureCount++;
+                            resolve(false);
+                            return;
+                        }
+                        
+                        const format = formats[formatIndex];
+                        const path = `${fileNameWithoutExt}.${format}`;
+                        console.log(`🔊 Testing format: ${format}, path: ${path}`);
+                        
+                        // Remove previous event listeners
+                        audio.onloadeddata = null;
+                        audio.onerror = null;
+                        
+                        // Add new listeners
+                        audio.onloadeddata = () => {
+                            console.log(`✅ Successfully loaded audio: ${path}`);
+                            appendResult(`✅ ${path} loaded successfully`, true);
+                            successCount++;
+                            resolve(true);
+                        };
+                        
+                        audio.onerror = (e) => {
+                            console.error(`❌ Error loading audio at path: ${path}`);
+                            console.error(`Error code: ${audio.error ? audio.error.code : 'unknown'}`);
+                            formatIndex++;
+                            setTimeout(tryNextFormat, 100);
+                        };
+                        
+                        // Set source and try to load
+                        try {
+                            audio.src = path;
+                            audio.load();
+                        } catch (e) {
+                            console.error(`❌ Exception loading audio at path: ${path}`, e);
+                            formatIndex++;
+                            setTimeout(tryNextFormat, 100);
+                        }
+                    }
+                    
+                    // Start testing formats
+                    tryNextFormat();
+                });
+            }
+            
+            // Test each audio file with fallbacks - stagger the tests
+            return Promise.all([
+                testAudioWithFallbacks(getAssetPath('assets/music/music.wav')),
+                new Promise(resolve => setTimeout(() => 
+                    testAudioWithFallbacks(getAssetPath('assets/sound/coin.wav')).then(resolve), 300)),
+                new Promise(resolve => setTimeout(() => 
+                    testAudioWithFallbacks(getAssetPath('assets/sound/jump.wav')).then(resolve), 600)),
+                new Promise(resolve => setTimeout(() => 
+                    testAudioWithFallbacks(getAssetPath('assets/sound/hit.wav')).then(resolve), 900)),
+                new Promise(resolve => setTimeout(() => 
+                    testAudioWithFallbacks(getAssetPath('assets/sound/game-over.wav')).then(resolve), 1200)),
+                new Promise(resolve => setTimeout(() => 
+                    testAudioWithFallbacks(getAssetPath('assets/sound/magnet.mp3'), ['mp3', 'wav', 'ogg']).then(resolve), 1500)),
+                new Promise(resolve => setTimeout(() => 
+                    testAudioWithFallbacks(getAssetPath('assets/sound/coffee.mp3'), ['mp3', 'wav', 'ogg']).then(resolve), 1800))
+            ]).then(() => {
+                console.log(`Audio test complete: ${successCount}/${totalFiles} files loaded successfully`);
+                if (successCount === totalFiles) {
+                    appendResult(`🎉 All ${totalFiles} audio files loaded successfully!`, true);
+                    return true;
+                } else {
+                    appendResult(`⚠️ ${failureCount}/${totalFiles} audio files failed to load`, false);
+                    return false;
+                }
+            });
+        }
+        
+        // Function to test background music with fallback mechanism
+        function testBackgroundMusic() {
+            console.log("Testing background music loading with fallback...");
+            
+            const backgroundMusic = new Audio();
+            backgroundMusic.volume = 0.2;
+            backgroundMusic.loop = true;
+            
+            // Try to load music in different formats with proper error handling
+            return new Promise((resolve) => {
+                const formats = ['wav', 'mp3', 'ogg'];
+                let formatIndex = 0;
+                let success = false;
+                
+                const tryNextFormat = () => {
+                    if (formatIndex >= formats.length) {
+                        console.warn('Could not load background music in any format');
+                        if (!success) {
+                            appendResult('❌ Background music failed to load in any format', false);
+                            resolve(false);
+                        }
+                        return;
+                    }
+                    
+                    const format = formats[formatIndex];
+                    const path = getAssetPath(`assets/music/music.${format}`);
+                    console.log(`Trying to load background music from: ${path}`);
+                    
+                    // Remove previous error listener if any
+                    backgroundMusic.removeEventListener('error', handleError);
+                    backgroundMusic.removeEventListener('canplaythrough', handleSuccess);
+                    
+                    // Add new event handlers
+                    backgroundMusic.addEventListener('error', handleError);
+                    backgroundMusic.addEventListener('canplaythrough', handleSuccess);
+                    
+                    // Set source and try to load
+                    backgroundMusic.src = path;
+                    try {
+                        backgroundMusic.load();
+                    } catch (e) {
+                        console.error(`Exception loading audio at path: ${path}`, e);
+                        formatIndex++;
+                        setTimeout(tryNextFormat, 100);
+                    }
+                };
+                
+                const handleSuccess = () => {
+                    console.log(`Successfully loaded background music in ${formats[formatIndex]} format`);
+                    appendResult(`✅ Background music loaded in ${formats[formatIndex]} format`, true);
+                    success = true;
+                    
+                    // Try to play a short sample
+                    try {
+                        backgroundMusic.play().then(() => {
+                            setTimeout(() => {
+                                backgroundMusic.pause();
+                            }, 2000);
+                        }).catch(e => {
+                            console.warn('Could not autoplay audio (browser restrictions)', e);
+                        });
+                    } catch (e) {
+                        console.warn('Error attempting to play audio:', e);
+                    }
+                    
+                    resolve(true);
+                };
+                
+                const handleError = () => {
+                    console.error(`Failed to load background music in ${formats[formatIndex]} format`);
+                    formatIndex++;
+                    setTimeout(tryNextFormat, 100);
+                };
+                
+                // Start trying formats
+                tryNextFormat();
+            });
+        }
+        
+        // Add button event listeners
+        document.getElementById('testMusic').addEventListener('click', function() {
+            // Clear previous results
+            document.getElementById('results').innerHTML = '';
+            testBackgroundMusic();
+        });
+        
+        document.getElementById('testAllAudio').addEventListener('click', function() {
+            // Clear previous results
+            document.getElementById('results').innerHTML = '';
+            testAudioPaths();
+        });
+        
+        // Log some basic information on load
+        window.addEventListener('load', () => {
+            console.log('Game Audio Test page loaded');
+            console.log('Current protocol:', window.location.protocol);
+            console.log('Current host:', window.location.host);
+            console.log('Browser audio support:');
+            const audio = document.createElement('audio');
+            console.log('- WAV support:', audio.canPlayType('audio/wav') || 'not supported');
+            console.log('- MP3 support:', audio.canPlayType('audio/mpeg') || 'not supported');
+            console.log('- OGG support:', audio.canPlayType('audio/ogg') || 'not supported');
+            
+            appendResult('Audio Test ready - Click a button to begin testing', true);
+        });
+    </script>
+</body>
+</html> 

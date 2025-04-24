@@ -1,3 +1,11 @@
+// Game class definition - moved outside DOMContentLoaded
+class Game {
+    constructor() {
+        // ... existing code ...
+    }
+    // ... existing code ...
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
     

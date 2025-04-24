@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .log {
+            background-color: #e2e3e5;
+            color: #383d41;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: monospace;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Audio Loading Test</h1>
+    
+    <div>
+        <h2>Test Background Music</h2>
+        <button id="testWav">Test WAV</button>
+        <button id="testMp3">Test MP3</button>
+        <button id="testOgg">Test OGG</button>
+        <button id="testAllFormats">Test All Formats (with fallback)</button>
+    </div>
+    
+    <h2>Results:</h2>
+    <div id="results"></div>
+    
+    <h2>Console Log:</h2>
+    <div id="log" class="log"></div>
+    
+    <script src="asset-path.js"></script>
+    <script>
+        // Override console.log to display in our log div
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            appendToLog('LOG', args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            appendToLog('ERROR', args);
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            appendToLog('WARN', args);
+        };
+        
+        function appendToLog(type, args) {
+            const logDiv = document.getElementById('log');
+            const line = document.createElement('div');
+            line.textContent = `[${type}] ${args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ')}`;
+            
+            if (type === 'ERROR') {
+                line.style.color = '#dc3545';
+            } else if (type === 'WARN') {
+                line.style.color = '#ffc107';
+            }
+            
+            logDiv.appendChild(line);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function appendResult(message, isSuccess) {
+            const resultsDiv = document.getElementById('results');
+            const result = document.createElement('div');
+            result.className = isSuccess ? 'result success' : 'result error';
+            result.textContent = message;
+            resultsDiv.appendChild(result);
+        }
+        
+        function testAudio(format) {
+            const formatExt = format.toLowerCase();
+            const path = getAssetPath(`assets/music/music.${formatExt}`);
+            console.log(`Testing audio format: ${format}, path: ${path}`);
+            
+            const audio = new Audio();
+            
+            return new Promise((resolve, reject) => {
+                audio.addEventListener('canplaythrough', () => {
+                    console.log(`Success! ${format} file loaded: ${path}`);
+                    appendResult(`✅ ${format} format loaded successfully`, true);
+                    resolve(audio);
+                });
+                
+                audio.addEventListener('error', (e) => {
+                    console.error(`Failed to load ${format} file: ${path}`, e);
+                    console.error(`Error code: ${audio.error ? audio.error.code : 'unknown'}`);
+                    console.error(`Error message: ${audio.error ? audio.error.message : 'unknown'}`);
+                    appendResult(`❌ ${format} format failed to load`, false);
+                    reject(e);
+                });
+                
+                audio.src = path;
+                audio.load();
+            });
+        }
+        
+        function testWithFallback() {
+            const formats = ['wav', 'mp3', 'ogg'];
+            let formatIndex = 0;
+            
+            function tryNextFormat() {
+                if (formatIndex >= formats.length) {
+                    console.warn('Could not load audio in any format');
+                    appendResult('❌ All formats failed to load', false);
+                    return Promise.reject(new Error('All formats failed'));
+                }
+                
+                const format = formats[formatIndex];
+                formatIndex++;
+                
+                return testAudio(format).catch(e => {
+                    console.log(`Trying next format after ${format} failed`);
+                    return tryNextFormat();
+                });
+            }
+            
+            return tryNextFormat();
+        }
+        
+        document.getElementById('testWav').addEventListener('click', () => {
+            testAudio('wav').then(audio => {
+                // Play a short snippet on success
+                audio.volume = 0.2;
+                audio.play().then(() => {
+                    setTimeout(() => {
+                        audio.pause();
+                    }, 2000);
+                }).catch(e => {
+                    console.warn('Could not autoplay audio (browser restrictions)', e);
+                });
+            }).catch(e => {
+                console.error('WAV test failed completely');
+            });
+        });
+        
+        document.getElementById('testMp3').addEventListener('click', () => {
+            testAudio('mp3').then(audio => {
+                // Play a short snippet on success
+                audio.volume = 0.2;
+                audio.play().then(() => {
+                    setTimeout(() => {
+                        audio.pause();
+                    }, 2000);
+                }).catch(e => {
+                    console.warn('Could not autoplay audio (browser restrictions)', e);
+                });
+            }).catch(e => {
+                console.error('MP3 test failed completely');
+            });
+        });
+        
+        document.getElementById('testOgg').addEventListener('click', () => {
+            testAudio('ogg').then(audio => {
+                // Play a short snippet on success
+                audio.volume = 0.2;
+                audio.play().then(() => {
+                    setTimeout(() => {
+                        audio.pause();
+                    }, 2000);
+                }).catch(e => {
+                    console.warn('Could not autoplay audio (browser restrictions)', e);
+                });
+            }).catch(e => {
+                console.error('OGG test failed completely');
+            });
+        });
+        
+        document.getElementById('testAllFormats').addEventListener('click', () => {
+            testWithFallback().then(audio => {
+                appendResult('✅ Successfully loaded audio with fallback mechanism', true);
+                
+                // Try to play it
+                audio.volume = 0.2;
+                audio.play().then(() => {
+                    setTimeout(() => {
+                        audio.pause();
+                    }, 2000);
+                }).catch(e => {
+                    console.warn('Could not autoplay audio (browser restrictions)', e);
+                });
+            }).catch(e => {
+                appendResult('❌ All formats failed - something is wrong with the audio files', false);
+            });
+        });
+        
+        // Log some basic information on load
+        window.addEventListener('load', () => {
+            console.log('Audio test page loaded');
+            console.log('Current protocol:', window.location.protocol);
+            console.log('Current host:', window.location.host);
+            console.log('Browser audio support:');
+            const audio = document.createElement('audio');
+            console.log('- WAV support:', audio.canPlayType('audio/wav') || 'not supported');
+            console.log('- MP3 support:', audio.canPlayType('audio/mpeg') || 'not supported');
+            console.log('- OGG support:', audio.canPlayType('audio/ogg') || 'not supported');
+        });
+    </script>
+</body>
+</html> 
