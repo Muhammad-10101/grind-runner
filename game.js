@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.currentGame.isPaused = false;
             if (window.audioState.musicEnabled) {
                 window.currentGame.backgroundMusic.currentTime = 0;
-                window.currentGame.backgroundMusic.play();
+                window.currentGame.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
             }
             // Restart obstacle spawning
             window.currentGame.spawnObstacles();
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Only play/pause music if we're in the game
         if (window.currentGame && gameRunning) {
             if (pauseMusicToggle.checked) {
-                window.currentGame.backgroundMusic.play();
+                window.currentGame.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
             } else {
                 window.currentGame.backgroundMusic.pause();
             }
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Only play/pause music if we're in the game
         if (currentGame && gameRunning) {
             if (pauseMusicToggle.checked) {
-                currentGame.backgroundMusic.play();
+                currentGame.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
             } else {
                 currentGame.backgroundMusic.pause();
             }
@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Only play/pause music if we're in the game
             if (currentGame && gameRunning) {
                 if (musicToggle.checked) {
-                    currentGame.backgroundMusic.play();
+                    currentGame.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
                 } else {
                     currentGame.backgroundMusic.pause();
                 }
@@ -519,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Only play/pause music if we're in the game
             if (currentGame && gameRunning) {
                 if (musicToggle.checked) {
-                    currentGame.backgroundMusic.play();
+                    currentGame.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
                 } else {
                     currentGame.backgroundMusic.pause();
                 }
@@ -1771,9 +1771,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.spawnTokens();
                 this.spawnItems(); // Start item spawning
                 
-                // Start background music
+                // Restart background music if enabled
                 if (window.audioState.musicEnabled) {
-                    this.backgroundMusic.play();
+                    this.backgroundMusic.currentTime = 0;
+                    this.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
                 }
                 
                 // Log initialization
@@ -2459,7 +2460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Play magnet sound effect if enabled
             if (window.audioState && window.audioState.sfxEnabled) {
                 try {
-                    const magnetSound = new Audio('assets/sound/magnet.mp3');
+                    const magnetSound = new Audio(getAssetPath('assets/sound/magnet.mp3'));
                     magnetSound.volume = 0.3;
                     magnetSound.play().catch(err => console.log('Magnet audio play error:', err));
                 } catch (error) {
@@ -2537,7 +2538,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Play coffee power sound if enabled
             if (window.audioState && window.audioState.sfxEnabled) {
                 try {
-                    const coffeeSound = new Audio('assets/sound/coffee.mp3');
+                    const coffeeSound = new Audio(getAssetPath('assets/sound/coffee.mp3'));
                     coffeeSound.volume = 0.3;
                     coffeeSound.play().catch(err => console.log('Audio play error:', err));
                 } catch (error) {
@@ -2616,7 +2617,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Play magnet sound effect if enabled
             if (window.audioState && window.audioState.sfxEnabled) {
                 try {
-                    const magnetSound = new Audio('assets/sound/magnet.mp3');
+                    const magnetSound = new Audio(getAssetPath('assets/sound/magnet.mp3'));
                     magnetSound.volume = 0.3;
                     magnetSound.play().catch(err => console.log('Magnet audio play error:', err));
                 } catch (error) {
@@ -2694,7 +2695,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Play coffee power sound if enabled
             if (window.audioState && window.audioState.sfxEnabled) {
                 try {
-                    const coffeeSound = new Audio('assets/sound/coffee.mp3');
+                    const coffeeSound = new Audio(getAssetPath('assets/sound/coffee.mp3'));
                     coffeeSound.volume = 0.3;
                     coffeeSound.play().catch(err => console.log('Audio play error:', err));
                 } catch (error) {
@@ -3798,7 +3799,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Resume the game
                 if (window.audioState.musicEnabled) {
-                    this.backgroundMusic.play();
+                    this.backgroundMusic.play().catch(err => console.error('Error playing background music:', err));
                 }
                 
                 // Hide pause overlay
@@ -4059,7 +4060,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Play activation sound
             if (window.audioState.sfxEnabled) {
-                const activationSound = new Audio(`assets/sound/${itemId}-activation.wav`);
+                const activationSound = new Audio(getAssetPath(`assets/sound/${itemId}-activation.wav`));
                 activationSound.volume = 0.3;
                 activationSound.onerror = () => {
                     console.error(`Failed to load ${itemId} activation sound`);
@@ -4681,5 +4682,54 @@ document.addEventListener('DOMContentLoaded', function() {
             showMessage("Achievements system coming soon. Your grind will be rewarded!", 'info');
         });
     }
+});
+
+// Test function to verify audio paths
+function testAudioPaths() {
+    console.log("Testing audio paths:");
+    const paths = [
+        getAssetPath('assets/music/music.wav'),
+        getAssetPath('assets/sound/coin.wav'),
+        getAssetPath('assets/sound/jump.wav'),
+        getAssetPath('assets/sound/hit.wav'),
+        getAssetPath('assets/sound/game-over.wav'),
+        getAssetPath('assets/sound/magnet.mp3'),
+        getAssetPath('assets/sound/coffee.mp3')
+    ];
+    
+    paths.forEach(path => {
+        console.log(`Testing path: ${path}`);
+        const audio = new Audio();
+        
+        // Log errors
+        audio.addEventListener('error', (e) => {
+            console.error(`Error loading audio at path: ${path}`, e);
+            console.error(`Error code: ${audio.error ? audio.error.code : 'unknown'}`);
+            console.error(`Error message: ${audio.error ? audio.error.message : 'unknown'}`);
+        });
+        
+        // Log successful load
+        audio.addEventListener('loadeddata', () => {
+            console.log(`Successfully loaded audio: ${path}`);
+        });
+        
+        // Set source after adding event listeners
+        audio.src = path;
+        
+        // Try to load the audio
+        try {
+            audio.load();
+        } catch (e) {
+            console.error(`Exception loading audio at path: ${path}`, e);
+        }
+    });
+    
+    console.log("Audio path test initialization complete");
+}
+
+// Call the test function when the game initializes
+window.addEventListener('load', () => {
+    // Allow time for other resources to load first
+    setTimeout(testAudioPaths, 2000);
 });
 
