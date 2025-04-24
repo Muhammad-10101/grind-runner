@@ -1530,10 +1530,59 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio(getAssetPath('assets/music/music.wav'));
+            this.backgroundMusic = new Audio();
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
-            this.backgroundMusic.onerror = () => console.error('Failed to load background music');
+            
+            // Try to load music in different formats with proper error handling
+            const loadBackgroundMusic = () => {
+                const formats = ['wav', 'mp3', 'ogg'];
+                let formatIndex = 0;
+                
+                const tryNextFormat = () => {
+                    if (formatIndex >= formats.length) {
+                        console.warn('Could not load background music in any format');
+                        return;
+                    }
+                    
+                    const format = formats[formatIndex];
+                    const path = getAssetPath(`assets/music/music.${format}`);
+                    console.log(`Trying to load background music from: ${path}`);
+                    
+                    // Remove previous error listener if any
+                    this.backgroundMusic.removeEventListener('error', handleError);
+                    
+                    // Add new error handler
+                    this.backgroundMusic.addEventListener('error', handleError);
+                    
+                    // Add success handler
+                    this.backgroundMusic.addEventListener('loadeddata', () => {
+                        console.log(`Successfully loaded background music: ${path}`);
+                    }, { once: true });
+                    
+                    // Set source and try to load
+                    this.backgroundMusic.src = path;
+                    try {
+                        this.backgroundMusic.load();
+                    } catch (e) {
+                        console.error(`Exception loading audio at path: ${path}`, e);
+                        formatIndex++;
+                        setTimeout(tryNextFormat, 100);
+                    }
+                };
+                
+                const handleError = () => {
+                    console.error(`Failed to load background music in format: ${formats[formatIndex]}`);
+                    formatIndex++;
+                    setTimeout(tryNextFormat, 100);
+                };
+                
+                // Start trying formats
+                tryNextFormat();
+            };
+            
+            // Start loading background music
+            loadBackgroundMusic();
             
             // Initialize audio based on saved settings
             if (!window.audioState.musicEnabled) {
@@ -1699,10 +1748,59 @@ document.addEventListener('DOMContentLoaded', () => {
             this.hitSound.onerror = () => console.error('Failed to load hit sound');
             
             // Load and setup background music
-            this.backgroundMusic = new Audio(getAssetPath('assets/music/music.wav'));
+            this.backgroundMusic = new Audio();
             this.backgroundMusic.volume = 0.2; // Set music volume lower than sound effects
             this.backgroundMusic.loop = true; // Make the music loop continuously
-            this.backgroundMusic.onerror = () => console.error('Failed to load background music');
+            
+            // Try to load music in different formats with proper error handling
+            const loadBackgroundMusic = () => {
+                const formats = ['wav', 'mp3', 'ogg'];
+                let formatIndex = 0;
+                
+                const tryNextFormat = () => {
+                    if (formatIndex >= formats.length) {
+                        console.warn('Could not load background music in any format');
+                        return;
+                    }
+                    
+                    const format = formats[formatIndex];
+                    const path = getAssetPath(`assets/music/music.${format}`);
+                    console.log(`Trying to load background music from: ${path}`);
+                    
+                    // Remove previous error listener if any
+                    this.backgroundMusic.removeEventListener('error', handleError);
+                    
+                    // Add new error handler
+                    this.backgroundMusic.addEventListener('error', handleError);
+                    
+                    // Add success handler
+                    this.backgroundMusic.addEventListener('loadeddata', () => {
+                        console.log(`Successfully loaded background music: ${path}`);
+                    }, { once: true });
+                    
+                    // Set source and try to load
+                    this.backgroundMusic.src = path;
+                    try {
+                        this.backgroundMusic.load();
+                    } catch (e) {
+                        console.error(`Exception loading audio at path: ${path}`, e);
+                        formatIndex++;
+                        setTimeout(tryNextFormat, 100);
+                    }
+                };
+                
+                const handleError = () => {
+                    console.error(`Failed to load background music in format: ${formats[formatIndex]}`);
+                    formatIndex++;
+                    setTimeout(tryNextFormat, 100);
+                };
+                
+                // Start trying formats
+                tryNextFormat();
+            };
+            
+            // Start loading background music
+            loadBackgroundMusic();
         }
         
         resizeCanvas() {
@@ -4687,42 +4785,56 @@ document.addEventListener('DOMContentLoaded', function() {
 // Test function to verify audio paths
 function testAudioPaths() {
     console.log("Testing audio paths:");
-    const paths = [
-        getAssetPath('assets/music/music.wav'),
-        getAssetPath('assets/sound/coin.wav'),
-        getAssetPath('assets/sound/jump.wav'),
-        getAssetPath('assets/sound/hit.wav'),
-        getAssetPath('assets/sound/game-over.wav'),
-        getAssetPath('assets/sound/magnet.mp3'),
-        getAssetPath('assets/sound/coffee.mp3')
-    ];
     
-    paths.forEach(path => {
-        console.log(`Testing path: ${path}`);
-        const audio = new Audio();
+    // Function to test multiple formats for the same audio file
+    function testAudioWithFallbacks(basePath, formats = ['wav', 'mp3', 'ogg']) {
+        const fileNameWithoutExt = basePath.substring(0, basePath.lastIndexOf('.'));
+        let formatIndex = 0;
         
-        // Log errors
-        audio.addEventListener('error', (e) => {
-            console.error(`Error loading audio at path: ${path}`, e);
-            console.error(`Error code: ${audio.error ? audio.error.code : 'unknown'}`);
-            console.error(`Error message: ${audio.error ? audio.error.message : 'unknown'}`);
-        });
-        
-        // Log successful load
-        audio.addEventListener('loadeddata', () => {
-            console.log(`Successfully loaded audio: ${path}`);
-        });
-        
-        // Set source after adding event listeners
-        audio.src = path;
-        
-        // Try to load the audio
-        try {
-            audio.load();
-        } catch (e) {
-            console.error(`Exception loading audio at path: ${path}`, e);
+        function tryNextFormat() {
+            if (formatIndex >= formats.length) {
+                console.warn(`Could not load audio ${basePath} in any format`);
+                return;
+            }
+            
+            const format = formats[formatIndex];
+            const path = `${fileNameWithoutExt}.${format}`;
+            console.log(`Testing path: ${path}`);
+            
+            const audio = new Audio();
+            
+            audio.addEventListener('error', () => {
+                console.error(`Error loading audio at path: ${path}`);
+                formatIndex++;
+                tryNextFormat();
+            });
+            
+            audio.addEventListener('loadeddata', () => {
+                console.log(`Successfully loaded audio: ${path}`);
+            });
+            
+            audio.src = path;
+            
+            try {
+                audio.load();
+            } catch (e) {
+                console.error(`Exception loading audio at path: ${path}`, e);
+                formatIndex++;
+                tryNextFormat();
+            }
         }
-    });
+        
+        tryNextFormat();
+    }
+    
+    // Test each audio file with fallbacks
+    testAudioWithFallbacks(getAssetPath('assets/music/music.wav'));
+    testAudioWithFallbacks(getAssetPath('assets/sound/coin.wav'));
+    testAudioWithFallbacks(getAssetPath('assets/sound/jump.wav'));
+    testAudioWithFallbacks(getAssetPath('assets/sound/hit.wav'));
+    testAudioWithFallbacks(getAssetPath('assets/sound/game-over.wav'));
+    testAudioWithFallbacks(getAssetPath('assets/sound/magnet.mp3'));
+    testAudioWithFallbacks(getAssetPath('assets/sound/coffee.mp3'));
     
     console.log("Audio path test initialization complete");
 }
