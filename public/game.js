@@ -4675,16 +4675,7 @@ function createStars() {
 // Theme switching functionality
 initTheme();
 
-// Initialize game when window loads
-window.addEventListener('DOMContentLoaded', () => {
-    // Create game instance safely after the entire script has loaded
-    setTimeout(() => {
-        const game = new Game();
-        
-        // Log initialization
-        console.log('Game instance created');
-    }, 0);
-}); 
+// Initialize game when window loads - Moved to the end of the file
 
 // Show message
 function showMessage(text, type = 'success') {
@@ -4768,5 +4759,16 @@ function testAudioPaths() {
 window.addEventListener('load', () => {
     // Allow time for other resources to load first
     setTimeout(testAudioPaths, 2000);
+});
+
+// Initialize game when window loads - moved to end of file after all definitions
+window.addEventListener('DOMContentLoaded', () => {
+    // Create game instance safely after the entire script has loaded
+    setTimeout(() => {
+        const game = new Game();
+        
+        // Log initialization
+        console.log('Game instance created');
+    }, 0);
 });
 
